@@ -1,6 +1,12 @@
 <%@ page language="java" contentType="text/html;charset=UTF-8" 
     pageEncoding="UTF-8" import="java.util.*" %>
 <% 
+	String name ="LPT";
+	request.setAttribute("name", name);
+	
+	String[] langs = {"Java", "JavaScript", "Python"};
+	request.setAttribute("langs", langs);
+
 	List<String> greetings = new ArrayList<>();
 	greetings.add("Hello World");
 	greetings.add("Have a nice day");
@@ -13,6 +19,10 @@
 %>
 <html>
 <body>
+${name}<p>
+${langs[0]}<br>
+${langs[1]}<br>
+${langs[2]}<p>
 ${greetings[0]}<br>
 ${greetings[1]}<br>
 ${greetings[2]}<p>

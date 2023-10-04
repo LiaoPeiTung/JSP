@@ -1,4 +1,4 @@
-package com.lcpan.m13;
+package com.lcpan.m14;
 
 import java.io.*;
 import java.sql.Connection;
@@ -16,8 +16,8 @@ import javax.sql.DataSource;
 
 import com.lcpan.bean.EmpBean;
 
-@WebServlet("/InsertEmpJNDI")
-public class InsertEmpJNDI extends HttpServlet {
+@WebServlet("/GetEmpEL")
+public class GetEmpEL extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 //	private static final String JDBC_DRIVER = 
 //			"com.microsoft.sqlserver.jdbc.SQLServerDriver";
@@ -25,40 +25,30 @@ public class InsertEmpJNDI extends HttpServlet {
 //			"jdbc:sqlserver://localhost:1433;databaseName=jdbc;trustServerCertificate=true";
 //	private static final String USER = "sa";
 //	private static final String PASSWORD = "!2525KJHIuejhd@";
-	private static final String SQL = "INSERT INTO employee VALUES (?, ?, ?, ?, ?, ?)";
+	private static final String SQL = "SELECT * FROM employee where empno = ?";
     
 	Connection conn;
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		int empno = Integer.parseInt(request.getParameter("empno"));
-		String ename = request.getParameter("ename");
-		String hiredate = request.getParameter("hiredate");
-		int salary = Integer.parseInt(request.getParameter("salary"));
-		int deptno = Integer.parseInt(request.getParameter("deptno"));
-		String title = request.getParameter("title");
+		String empno = request.getParameter("empno");
 		try {     
 			Context context = new InitialContext();
 			DataSource ds = (DataSource) context.lookup("java:/comp/env/jdbc/servdb");
 			conn = ds.getConnection();
 			PreparedStatement stmt = conn.prepareStatement(SQL);
-			stmt.setInt(1, empno);
-			stmt.setString(2, ename);
-			stmt.setString(3, hiredate);
-			stmt.setInt(4, salary);
-			stmt.setInt(5, deptno);
-			stmt.setString(6, title);
-//			EmpBean emp = new EmpBean();
-//			if (rs.next()) {
-//				emp.setEmpno(rs.getString("empno"));
-//				emp.setEname(rs.getString("ename"));
-//				emp.setHiredate(rs.getString("hiredate"));
-//				emp.setSalary(rs.getString("salary"));
-//				emp.setDeptno(rs.getString("deptno"));
-//				emp.setTitle(rs.getString("title"));
-//			}
-//			request.setAttribute("emp", emp);
-//			rs.close();
-			stmt.executeUpdate();
+			stmt.setString(1, empno);
+			ResultSet rs = stmt.executeQuery();
+			EmpBean emp = new EmpBean();
+			if (rs.next()) {
+				emp.setEmpno(rs.getString("empno"));
+				emp.setEname(rs.getString("ename"));
+				emp.setHiredate(rs.getString("hiredate"));
+				emp.setSalary(rs.getString("salary"));
+				emp.setDeptno(rs.getString("deptno"));
+				emp.setTitle(rs.getString("title"));
+			}
+			request.setAttribute("emp", emp);
+			rs.close();
 			stmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -73,7 +63,7 @@ public class InsertEmpJNDI extends HttpServlet {
 					e.printStackTrace();
 				}
 		}
-		request.getRequestDispatcher("/m13/InsertEmpHomework.jsp").forward(request, response);
+		request.getRequestDispatcher("/m14/GetEmp.jsp").forward(request, response);
 	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
